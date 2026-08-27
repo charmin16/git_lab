@@ -7,6 +7,7 @@ from pwdlib import PasswordHash
 from datetime import datetime, date, timedelta
 from dotenv import load_dotenv
 import os
+from models import User
 
 load_dotenv()
 
@@ -43,6 +44,18 @@ def create_token(data: dict):
     return jwt_encoded
 
 
+# get_current_user
+def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(get_db)):
+    payload = jwt.decode(
+        token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM]
+    )
 
-
-
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(400, "Invalid credentials")
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(404, "User not found")
+    return user
