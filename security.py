@@ -59,3 +59,8 @@ def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(g
     if not user:
         raise HTTPException(404, "User not found")
     return user
+
+
+def get_admin(admin: User = Depends(get_current_user)):
+    if admin.designation != "admin":
+        raise HTTPException(403, detail="Only Admins Can Do This")
