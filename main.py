@@ -9,7 +9,7 @@ from schema import CreateProperty, CreateUser, UpdateProp, PropNotAvail
 from file_services import verify_photo
 from datetime import datetime, date
 from typing import Annotated
-from enums import PropertyStatus, UserRole
+from enums import PropertyStatus, UserRole, ListingType
 from math import ceil
 
 # configurations
@@ -23,8 +23,7 @@ def create_user(user: CreateUser, db: Session = Depends(get_db)):
         raise HTTPException(409, f"{user.username} already exists")
     pwd_hash = hash_password(user.password)
 
-    new_user = User(username=user.username, password_hash=pwd_hash, phone=user.phone, display_name=user.display_name,
-                    role=user.role)
+    new_user = User(username=user.username, password_hash=pwd_hash, phone=user.phone, display_name=user.display_name)
 
     db.add(new_user)
     db.commit()
@@ -52,13 +51,44 @@ def login_user(formdata: OAuth2PasswordRequestForm = Depends(),
     }
 
 
-# create property
-@app.post("/property")
+'''@app.post("/properties")
 def create_property(
-        prop: Annotated[CreateProperty, Form()],
+    title: str = Form(...),
+):
+    return {"title": title}
+'''
+
+
+# create property
+@app.post("/properties")
+def create_property(
+        # prop: Annotated[CreateProperty, Form(...)],
+        title: str = Form(...),
+        city: str = Form(...),
+        area: str = Form(...),
+        bedrooms: int | None = Form(None),
+        listing: ListingType = Form(...),
+        price: float | None = Form(None),
+        annual_rent: float | None = Form(None),
+        lawyer_fee: float | None = Form(None),
+        caution_fee: float | None = Form(None),
+        has_c_of_o: bool | None = Form(None),
         cur_user: User = Depends(get_current_user),
         media: list[UploadFile] | None = File(None),
         db: Session = Depends(get_db)):
+
+    prop = CreateProperty(
+        title=title,
+        city=city,
+        area=area,
+        bedrooms=bedrooms,
+        listing=listing,
+        price=price,
+        annual_rent=annual_rent,
+        lawyer_fee=lawyer_fee,
+        caution_fee=caution_fee,
+        has_c_of_o=has_c_of_o
+    )
 
     new_prop = Property(title=prop.title,
                         city=prop.city,
@@ -75,12 +105,12 @@ def create_property(
     db.add(new_prop)
     db.flush()
 
-    for med in media:
+    for med in media or []:
         media_file = verify_photo(med)
         new_media = PropertyMedia(
-            filename=media_file.filename,
-            filepath=media_file.filepath,
-            media_type=media_file.media_type,
+            filename=media_file.get("filename"),
+            filepath=media_file.get("filepath"),
+            media_type=media_file.get("media_type"),
             property_id=new_prop.id
         )
 
@@ -176,5 +206,8 @@ def prop_unavail(prop_id: int, prop_sold: PropNotAvail, curr_user: User = Depend
 
     db.commit()
     return {"msg": "Sold/Rented Successful"}
+
+
+Base.metadata.create_all(bind=engine)
 
 
