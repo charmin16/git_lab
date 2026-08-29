@@ -208,6 +208,12 @@ def prop_unavail(prop_id: int, prop_sold: PropNotAvail, curr_user: User = Depend
     return {"msg": "Sold/Rented Successful"}
 
 
+# create sell item
+@app.post("/item")
+def create_item():
+    pass
+
+
 Base.metadata.create_all(bind=engine)
 
 
