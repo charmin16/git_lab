@@ -214,6 +214,12 @@ def create_item():
     pass
 
 
+# create artisan
+@app.post("/artisan")
+def create_artisan():
+    pass
+
+
 Base.metadata.create_all(bind=engine)
 
 
