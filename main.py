@@ -214,6 +214,15 @@ def create_item():
     pass
 
 
+# create artisan
+@app.post("/artisan")
+def create_artisan():
+    pass
+
+
+# create sales
+@app.post("/sales")
+def create_sales():
 # create prop
 @app.post("/prop")
 def create_prop():

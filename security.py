@@ -33,7 +33,7 @@ def verify_hashed_pwd(hashed: str, plain: str):
 def create_token(data: dict):
     to_encode = data.copy()
 
-    to_encode.update({"expiry": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRY)})
+    to_encode.update({"exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRY)})
 
     jwt_encoded = jwt.encode(
         to_encode,
@@ -64,3 +64,4 @@ def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(g
 def get_admin(admin: User = Depends(get_current_user)):
     if admin.designation != "admin":
         raise HTTPException(403, detail="Only Admins Can Do This")
+

@@ -4,9 +4,9 @@ import sqlite3
 
 DB_URL = "sqlite:///nexa.db"
 
-engine = create_engine(DB_URL, connect_args={"create_same_thread": False})
+engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
 
-SessionLocal = sessionmaker(autoflush=False, autocommit=True, bind=engine)
+SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
 
 
 def get_db():
