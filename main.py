@@ -223,6 +223,9 @@ def create_artisan():
 # create sales
 @app.post("/sales")
 def create_sales():
+# create prop
+@app.post("/prop")
+def create_prop():
     pass
 
 
