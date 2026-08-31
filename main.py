@@ -220,6 +220,12 @@ def create_artisan():
     pass
 
 
+# create sales
+@app.post("/sales")
+def create_sales():
+    pass
+
+
 Base.metadata.create_all(bind=engine)
 
 
