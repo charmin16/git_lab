@@ -214,6 +214,12 @@ def create_item():
     pass
 
 
+# create prop
+@app.post("/prop")
+def create_prop():
+    pass
+
+
 Base.metadata.create_all(bind=engine)
 
 
